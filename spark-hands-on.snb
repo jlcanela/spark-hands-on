@@ -1,0 +1,698 @@
+{
+  "metadata" : {
+    "id" : "f4c37526-ec89-462a-95bd-396e0bd86f7d",
+    "name" : "spark-hands-on",
+    "user_save_timestamp" : "1969-12-31T19:00:00.000Z",
+    "auto_save_timestamp" : "1969-12-31T19:00:00.000Z",
+    "language_info" : {
+      "name" : "scala",
+      "file_extension" : "scala",
+      "codemirror_mode" : "text/x-scala"
+    },
+    "trusted" : true,
+    "sparkNotebook" : null,
+    "customLocalRepo" : null,
+    "customRepos" : null,
+    "customDeps" : null,
+    "customImports" : null,
+    "customArgs" : null,
+    "customSparkConf" : null,
+    "customVars" : null
+  },
+  "cells" : [ {
+    "metadata" : {
+      "id" : "BFBE455415F64E0581471AEB0AFB9A79"
+    },
+    "cell_type" : "markdown",
+    "source" : "# Initialization"
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "E303DD5B6F85423D8780533CE72F173B"
+    },
+    "cell_type" : "code",
+    "source" : "val spark = sparkSession",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "spark: org.apache.spark.sql.SparkSession = org.apache.spark.sql.SparkSession@24190794\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 3,
+      "time" : "Took: 0.899s, at 2019-03-16 05:59"
+    } ]
+  }, {
+    "metadata" : {
+      "id" : "AE8C2A9F3761437481FB60FCEC736900"
+    },
+    "cell_type" : "markdown",
+    "source" : "# Data loading & partitionning"
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "1EBD632D7C644CAFB928F9DCEB03025E"
+    },
+    "cell_type" : "code",
+    "source" : "import sys.process._",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "import sys.process._\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 8,
+      "time" : "Took: 1.023s, at 2019-03-16 06:08"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "CC2E2769D4D74ED88D0B8D2EC81613C1"
+    },
+    "cell_type" : "code",
+    "source" : "\"ls\"!!",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "<console>:72: warning: postfix operator !! should be enabled\nby making the implicit value scala.language.postfixOps visible.\nThis can be achieved by adding the import clause 'import scala.language.postfixOps'\nor by setting the compiler option -language:postfixOps.\nSee the Scaladoc for value scala.language.postfixOps for a discussion\nwhy the feature should be explicitly enabled.\n       \"ls\"!!\n           ^\nres13: String =\n\"bin\nconf\nlib\nlogs\nnotebooks\nREADME.md\nRUNNING_PID\nshare\nspark-warehouse\n\"\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "bin\nconf\nlib\nlogs\nnotebooks\nREADME.md\nRUNNING_PID\nshare\nspark-warehouse\n"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 9,
+      "time" : "Took: 0.975s, at 2019-03-16 06:09"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "E79F9E759BC141688257F918741C3860"
+    },
+    "cell_type" : "code",
+    "source" : "val df = spark.read.parquet(\"/home/user/Documents/dev/spark/spark-hands-on/accesslog\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "df: org.apache.spark.sql.DataFrame = [time: string, ip: string ... 3 more fields]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 10,
+      "time" : "Took: 6.060s, at 2019-03-16 12:52"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "273E7F9BDBBB4F2B9E636D98C08B01DC"
+    },
+    "cell_type" : "code",
+    "source" : "df.printSchema",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "root\n |-- time: string (nullable = true)\n |-- ip: string (nullable = true)\n |-- uri: string (nullable = true)\n |-- cookieId: string (nullable = true)\n |-- day: date (nullable = true)\n\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 11,
+      "time" : "Took: 1.705s, at 2019-03-16 12:52"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "47394EFA36AF4C998876F8BC0DCE7E77"
+    },
+    "cell_type" : "code",
+    "source" : "\"tree /home/user/Documents/dev/spark/spark-hands-on/accesslog\"!!",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "<console>:72: warning: postfix operator !! should be enabled\nby making the implicit value scala.language.postfixOps visible.\nThis can be achieved by adding the import clause 'import scala.language.postfixOps'\nor by setting the compiler option -language:postfixOps.\nSee the Scaladoc for value scala.language.postfixOps for a discussion\nwhy the feature should be explicitly enabled.\n       \"tree /home/user/Documents/dev/spark/spark-hands-on/accesslog\"!!\n                                                                     ^\nres32: String =\n\"/home/user/Documents/dev/spark/spark-hands-on/accesslog\n├── day=2019-01-01\n│   ├── part-00000-73151710-74b6-4fd5-8608-e3ef7a58bf50-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-02\n│   ├── part-00000-6888fd78-3ce7-42de-a82d-85ef4943c83b-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-03\n│   ├── part-00000-599d8019-66f6-4fbf-b7e5-a23e6f69b2a9-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-04\n│   ├── part-00000-6279d4db-f8dd-44db-930f-a73644bfb411-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-05\n│   ├── part-00000-b9f53e79-ac7a-4120-873c-e9ce0118b58f-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-06\n│   ├── part-00000-7a14ef6d-8a82-417f-94b7-aeb720840272-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-07\n│   ├── part-00000-9c7dfc29-f60d-..."
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "/home/user/Documents/dev/spark/spark-hands-on/accesslog\n├── day=2019-01-01\n│   ├── part-00000-73151710-74b6-4fd5-8608-e3ef7a58bf50-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-02\n│   ├── part-00000-6888fd78-3ce7-42de-a82d-85ef4943c83b-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-03\n│   ├── part-00000-599d8019-66f6-4fbf-b7e5-a23e6f69b2a9-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-04\n│   ├── part-00000-6279d4db-f8dd-44db-930f-a73644bfb411-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-05\n│   ├── part-00000-b9f53e79-ac7a-4120-873c-e9ce0118b58f-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-06\n│   ├── part-00000-7a14ef6d-8a82-417f-94b7-aeb720840272-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-07\n│   ├── part-00000-9c7dfc29-f60d-47e4-a2ce-4291dd74090c-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-08\n│   ├── part-00000-a2799c1e-de26-4767-93fd-b6122cf624ae-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-09\n│   ├── part-00000-a1b18c0b-2434-45aa-83c2-24c2ff57043d-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-10\n│   ├── part-00000-d7559a67-655c-4cec-9892-aa4e18759c33-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-11\n│   ├── part-00000-acc305bc-5a8e-4d2a-8705-3a1dc7397779-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-12\n│   ├── part-00000-dec551c8-54d9-442b-a155-065334ac0f88-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-13\n│   ├── part-00000-c4d773f6-f8dc-46b8-a7e8-924fccbe48d3-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-14\n│   ├── part-00000-1d54edef-5fee-4040-993c-22cd8baa0afe-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-15\n│   ├── part-00000-d5219e04-9e62-486f-b1c6-92a94c7d99f8-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-16\n│   ├── part-00000-dfc0faf3-eea5-4e47-8d43-67014dc97d34-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-17\n│   ├── part-00000-abd99b66-5b1c-40dd-a0e0-ad23deb7264e-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-18\n│   ├── part-00000-16c115a9-1a4f-472e-add3-6a4cb708e96e-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-19\n│   ├── part-00000-03f39aca-1191-4c21-8c26-8fa6b26a5fa0-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-20\n│   ├── part-00000-ff7247a7-2717-4349-bb09-14fbb0e60f7a-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-21\n│   ├── part-00000-ceddc380-bf11-42b9-b7e2-b98a11cff886-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-22\n│   ├── part-00000-7abb0079-df0f-4d3b-9c5e-f2e1c4da0bf7-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-23\n│   ├── part-00000-b3e80fa2-9fde-47f9-951f-305e39fe1eb3-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-24\n│   ├── part-00000-0cbc2166-fb04-4b5c-8730-6d76804182fe-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-25\n│   ├── part-00000-da1167ef-3aba-4a5b-8fe0-6890b641f95a-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-26\n│   ├── part-00000-15f8a1bc-ba9e-4336-ad68-8f97ea4bd5f5-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-27\n│   ├── part-00000-71e77d1d-19ea-46ba-9af1-979f1db2953f-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-28\n│   ├── part-00000-52e95f5f-6ee6-462b-b92a-38d3fe1aad0d-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-29\n│   ├── part-00000-c0711dd8-16f3-4d05-94db-a17f05456b9c-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-30\n│   ├── part-00000-2209ea01-c200-46d6-b367-88d839661e61-c000.snappy.parquet\n│   └── _SUCCESS\n├── day=2019-01-31\n│   ├── part-00000-9358447c-1cd7-4b25-9147-7a9d86109174-c000.snappy.parquet\n│   └── _SUCCESS\n└── day=2019-02-01\n    ├── part-00000-42d03a29-646b-4299-ba58-4f405097468d-c000.snappy.parquet\n    └── _SUCCESS\n\n32 directories, 64 files\n"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 20,
+      "time" : "Took: 0.882s, at 2019-03-16 13:04"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "151F7DDE348E4B888C52228B267466BF"
+    },
+    "cell_type" : "code",
+    "source" : "val df1 = spark.read.parquet(\"/home/user/Documents/dev/spark/spark-hands-on/accesslog/day=2019-01-01\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "df1: org.apache.spark.sql.DataFrame = [time: string, ip: string ... 2 more fields]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 17,
+      "time" : "Took: 0.782s, at 2019-03-16 13:02"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "7E701F1300D54C5385CCE41F7CAAC32A"
+    },
+    "cell_type" : "code",
+    "source" : "df1.printSchema",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "root\n |-- time: string (nullable = true)\n |-- ip: string (nullable = true)\n |-- uri: string (nullable = true)\n |-- cookieId: string (nullable = true)\n\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 18,
+      "time" : "Took: 0.878s, at 2019-03-16 13:02"
+    } ]
+  }, {
+    "metadata" : {
+      "id" : "47204A254BE9465F872B924C6A268852"
+    },
+    "cell_type" : "markdown",
+    "source" : "# Using SQL"
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "D2CFE52457BB426D94AD2CAD3DA99098"
+    },
+    "cell_type" : "code",
+    "source" : "df.registerTempTable(\"accesslog\")\nspark.sql(\"select * from accesslog order by day, time limit 10\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "<console>:74: warning: method registerTempTable in class Dataset is deprecated: Use createOrReplaceTempView(viewName) instead.\n       df.registerTempTable(\"accesslog\")\n          ^\nres42: org.apache.spark.sql.DataFrame = [time: string, ip: string ... 3 more fields]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div class=\"df-canvas\">\n      <script data-this=\"{&quot;dataId&quot;:&quot;anone7e957d7ea89b3525aa80a0b62fedc93&quot;,&quot;partitionIndexId&quot;:&quot;anonfaf7359df415c5e97d796b2ef87f615d&quot;,&quot;numPartitions&quot;:1,&quot;dfSchema&quot;:{&quot;type&quot;:&quot;struct&quot;,&quot;fields&quot;:[{&quot;name&quot;:&quot;time&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;ip&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;uri&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;cookieId&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;day&quot;,&quot;type&quot;:&quot;date&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}}]}}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/dataframe','../javascripts/notebook/consoleDir'], \n      function(dataframe, extension) {\n        dataframe.call(data, this, extension);\n      }\n    );/*]]>*/</script>\n      <link rel=\"stylesheet\" href=\"/assets/stylesheets/ipython/css/dataframe.css\" type=\"text/css\"/>\n    </div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 25,
+      "time" : "Took: 1.910s, at 2019-03-16 13:11"
+    } ]
+  }, {
+    "metadata" : {
+      "id" : "7C7FE8DD41C64AF4964B14C993CF327F"
+    },
+    "cell_type" : "markdown",
+    "source" : "# Using user defined functions"
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "F98FF995E7C84A22A0FA6DE932893748"
+    },
+    "cell_type" : "code",
+    "source" : "import org.apache.spark.sql.functions.udf",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "import org.apache.spark.sql.functions.udf\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 26,
+      "time" : "Took: 0.745s, at 2019-03-16 13:17"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "54D1B1A305B541059C32EE4D1BBF4273"
+    },
+    "cell_type" : "code",
+    "source" : "val addMark = udf { x: String => x + \"!\" }\nspark.sqlContext.udf.register(\"addMark\", addMark)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "addMark: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,StringType,Some(List(StringType)))\nres50: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function1>,StringType,Some(List(StringType)))\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "UserDefinedFunction(&lt;function1&gt;,StringType,Some(List(StringType)))"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 30,
+      "time" : "Took: 1.033s, at 2019-03-16 13:26"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "presentation" : {
+        "tabs_state" : "{\n  \"tab_id\": \"#tab1198937399-0\"\n}",
+        "pivot_chart_state" : "{\n  \"hiddenAttributes\": [],\n  \"menuLimit\": 200,\n  \"cols\": [],\n  \"rows\": [],\n  \"vals\": [],\n  \"exclusions\": {},\n  \"inclusions\": {},\n  \"unusedAttrsVertical\": 85,\n  \"autoSortUnusedAttrs\": false,\n  \"inclusionsInfo\": {},\n  \"aggregatorName\": \"Count\",\n  \"rendererName\": \"Table\"\n}"
+      },
+      "id" : "E595291D781C4DEAB3668BD097282D50"
+    },
+    "cell_type" : "code",
+    "source" : "spark.sql(\"select addMark(day) from accesslog\").take(1)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res52: Array[org.apache.spark.sql.Row] = Array([2019-01-08!])\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anon421adc5b7fc318adaedc437a669cc94d&quot;,&quot;dataInit&quot;:[],&quot;genId&quot;:&quot;1198937399&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tabs'], \n      function(playground, _magictabs) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictabs,\n    \"o\": {}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <div>\n        <ul class=\"nav nav-tabs\" id=\"ul1198937399\"><li>\n              <a href=\"#tab1198937399-0\"><i class=\"fa fa-table\"/></a>\n            </li><li>\n              <a href=\"#tab1198937399-1\"><i class=\"fa fa-cubes\"/></a>\n            </li></ul>\n\n        <div class=\"tab-content\" id=\"tab1198937399\"><div class=\"tab-pane\" id=\"tab1198937399-0\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anon6b31a4ca5d3f5a3b9ab5e114bf14c936&quot;,&quot;dataInit&quot;:[{&quot;UDF(cast(day as string))&quot;:&quot;2019-01-08!&quot;}],&quot;genId&quot;:&quot;2055008101&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tableChart'], \n      function(playground, _magictableChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictableChart,\n    \"o\": {\"headers\":[\"UDF(cast(day as string))\"],\"width\":600,\"height\":400}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon30f9501fb31a83fe926590086d424ff2&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon357d4f14f5736f5223ed7e9356759efa&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div><div class=\"tab-pane\" id=\"tab1198937399-1\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anonf521bf7b898d2c5e67080211ff67de60&quot;,&quot;dataInit&quot;:[{&quot;UDF(cast(day as string))&quot;:&quot;2019-01-08!&quot;}],&quot;genId&quot;:&quot;17136429&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/pivotChart'], \n      function(playground, _magicpivotChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magicpivotChart,\n    \"o\": {\"width\":600,\"height\":400,\"derivedAttributes\":{},\"extraOptions\":{}}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon311ee616875c55b71297606377104ed8&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon77a4fc8042000e148d8a038da6c28b26&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div></div>\n      </div>\n    </div></div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 31,
+      "time" : "Took: 1.165s, at 2019-03-16 13:26"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "DDD712B17C6E423D82240726EFB8A18C"
+    },
+    "cell_type" : "code",
+    "source" : "val toDateTime = udf { (day: String, time: String) => day + \"T\" + time }\nspark.sqlContext.udf.register(\"toDateTime\", toDateTime)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "toDateTime: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function2>,StringType,Some(List(StringType, StringType)))\nres58: org.apache.spark.sql.expressions.UserDefinedFunction = UserDefinedFunction(<function2>,StringType,Some(List(StringType, StringType)))\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "UserDefinedFunction(&lt;function2&gt;,StringType,Some(List(StringType, StringType)))"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 36,
+      "time" : "Took: 0.864s, at 2019-03-16 13:28"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "presentation" : {
+        "tabs_state" : "{\n  \"tab_id\": \"#tab238120474-0\"\n}",
+        "pivot_chart_state" : "{\n  \"hiddenAttributes\": [],\n  \"menuLimit\": 200,\n  \"cols\": [],\n  \"rows\": [],\n  \"vals\": [],\n  \"exclusions\": {},\n  \"inclusions\": {},\n  \"unusedAttrsVertical\": 85,\n  \"autoSortUnusedAttrs\": false,\n  \"inclusionsInfo\": {},\n  \"aggregatorName\": \"Count\",\n  \"rendererName\": \"Table\"\n}"
+      },
+      "id" : "72D484A4C1374123B537D6E97089B41E"
+    },
+    "cell_type" : "code",
+    "source" : "spark.sql(\"select toDateTime(day, time) from accesslog\").take(1)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res60: Array[org.apache.spark.sql.Row] = Array([2019-01-08T03:34:20.267])\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anon77e415e8d286c0d845c84e5d75652c4d&quot;,&quot;dataInit&quot;:[],&quot;genId&quot;:&quot;238120474&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tabs'], \n      function(playground, _magictabs) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictabs,\n    \"o\": {}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <div>\n        <ul class=\"nav nav-tabs\" id=\"ul238120474\"><li>\n              <a href=\"#tab238120474-0\"><i class=\"fa fa-table\"/></a>\n            </li><li>\n              <a href=\"#tab238120474-1\"><i class=\"fa fa-cubes\"/></a>\n            </li></ul>\n\n        <div class=\"tab-content\" id=\"tab238120474\"><div class=\"tab-pane\" id=\"tab238120474-0\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anondd09aeb5ae3a68a4d83635ea729fa21a&quot;,&quot;dataInit&quot;:[{&quot;UDF(cast(day as string), time)&quot;:&quot;2019-01-08T03:34:20.267&quot;}],&quot;genId&quot;:&quot;1165830272&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tableChart'], \n      function(playground, _magictableChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictableChart,\n    \"o\": {\"headers\":[\"UDF(cast(day as string), time)\"],\"width\":600,\"height\":400}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon3f708c495438b9acc3f35c8066d0f66c&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon462fc668adc145b16a694b941bbfe403&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div><div class=\"tab-pane\" id=\"tab238120474-1\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anonc071ee2d451fbdcbfc335474694be7ef&quot;,&quot;dataInit&quot;:[{&quot;UDF(cast(day as string), time)&quot;:&quot;2019-01-08T03:34:20.267&quot;}],&quot;genId&quot;:&quot;1014783701&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/pivotChart'], \n      function(playground, _magicpivotChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magicpivotChart,\n    \"o\": {\"width\":600,\"height\":400,\"derivedAttributes\":{},\"extraOptions\":{}}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon7cf9e28ed9a30d5ae53969b9ba954003&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anonf9f8f802e8d19916ebf73eb46cf663c9&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div></div>\n      </div>\n    </div></div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 37,
+      "time" : "Took: 0.992s, at 2019-03-16 13:28"
+    } ]
+  }, {
+    "metadata" : {
+      "id" : "A2D0A043E1BA4CB9BF8434DC9F1CD55C"
+    },
+    "cell_type" : "markdown",
+    "source" : "# Type cast"
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "presentation" : {
+        "tabs_state" : "{\n  \"tab_id\": \"#tab1731179441-0\"\n}",
+        "pivot_chart_state" : "{\n  \"hiddenAttributes\": [],\n  \"menuLimit\": 200,\n  \"cols\": [],\n  \"rows\": [],\n  \"vals\": [],\n  \"exclusions\": {},\n  \"inclusions\": {},\n  \"unusedAttrsVertical\": 85,\n  \"autoSortUnusedAttrs\": false,\n  \"inclusionsInfo\": {},\n  \"aggregatorName\": \"Count\",\n  \"rendererName\": \"Table\"\n}"
+      },
+      "id" : "04DCA7F217544E618E9A3451C118DDC9"
+    },
+    "cell_type" : "code",
+    "source" : "spark.sql(\"select cast(toDateTime(day, time) as TimeStamp), time from accesslog\").take(1)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res68: Array[org.apache.spark.sql.Row] = Array([2019-01-08 03:34:20.267,03:34:20.267])\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anona22dc1c481d85c6b93e04f1b38bdb0e5&quot;,&quot;dataInit&quot;:[],&quot;genId&quot;:&quot;1731179441&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tabs'], \n      function(playground, _magictabs) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictabs,\n    \"o\": {}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <div>\n        <ul class=\"nav nav-tabs\" id=\"ul1731179441\"><li>\n              <a href=\"#tab1731179441-0\"><i class=\"fa fa-table\"/></a>\n            </li><li>\n              <a href=\"#tab1731179441-1\"><i class=\"fa fa-pie-chart\"/></a>\n            </li><li>\n              <a href=\"#tab1731179441-2\"><i class=\"fa fa-cubes\"/></a>\n            </li></ul>\n\n        <div class=\"tab-content\" id=\"tab1731179441\"><div class=\"tab-pane\" id=\"tab1731179441-0\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anonbc91c648361c9999e06e15394855d4e7&quot;,&quot;dataInit&quot;:[{&quot;CAST(UDF(cast(day as string), time) AS TIMESTAMP)&quot;:1546936460267,&quot;time&quot;:&quot;03:34:20.267&quot;}],&quot;genId&quot;:&quot;1365771119&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tableChart'], \n      function(playground, _magictableChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictableChart,\n    \"o\": {\"headers\":[\"CAST(UDF(cast(day as string), time) AS TIMESTAMP)\",\"time\"],\"width\":600,\"height\":400}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anonf5956d3cf7a798f9a6b37199a7df6d26&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anonff1e61011771de843ffb32e2bd1d6879&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div><div class=\"tab-pane\" id=\"tab1731179441-1\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anonf07a35f2f9d0d405c160cf0585ea5fe2&quot;,&quot;dataInit&quot;:[{&quot;CAST(UDF(cast(day as string), time) AS TIMESTAMP)&quot;:1546936460267,&quot;time&quot;:&quot;03:34:20.267&quot;}],&quot;genId&quot;:&quot;704893088&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/pieChart'], \n      function(playground, _magicpieChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magicpieChart,\n    \"o\": {\"series\":\"CAST(UDF(cast(day as string), time) AS TIMESTAMP)\",\"p\":\"time\",\"width\":600,\"height\":400}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon958938ffe33af383951f683b267f3414&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon83b7bbb7dc1ce3688ff8948174cdbc8c&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div><div class=\"tab-pane\" id=\"tab1731179441-2\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anon0e6861c69289bfd8f9e637b392b2b8af&quot;,&quot;dataInit&quot;:[{&quot;CAST(UDF(cast(day as string), time) AS TIMESTAMP)&quot;:1546936460267,&quot;time&quot;:&quot;03:34:20.267&quot;}],&quot;genId&quot;:&quot;1490079276&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/pivotChart'], \n      function(playground, _magicpivotChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magicpivotChart,\n    \"o\": {\"width\":600,\"height\":400,\"derivedAttributes\":{},\"extraOptions\":{}}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon7d59b0514594f974de62fe86518194a0&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon5c689fd98ccf9cb0b9bb543d99a615b5&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div></div>\n      </div>\n    </div></div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 41,
+      "time" : "Took: 1.846s, at 2019-03-17 02:46"
+    } ]
+  }, {
+    "metadata" : {
+      "id" : "7C9FCE65574B4F6D8E7EEE0799A8CC61"
+    },
+    "cell_type" : "markdown",
+    "source" : "# Checking logs"
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "667C8129B7E9491F82060C5EE8095008"
+    },
+    "cell_type" : "code",
+    "source" : "val logs = spark.read.text(\"/home/user/Documents/dev/spark/spark-hands-on/almhuette-raith.log\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "logs: org.apache.spark.sql.DataFrame = [value: string]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 43,
+      "time" : "Took: 0.647s, at 2019-03-17 14:04"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "65FC9A6024A842B6896ACAB7AF86D837"
+    },
+    "cell_type" : "code",
+    "source" : "val R = \"\"\"^(?<ip>[0-9.]+) (?<identd>[^ ]) (?<user>[^ ]) \\[(?<datetime>[^\\]]+)\\] \\\"(?<request>[^\\\"]*)\\\" (?<status>[^ ]*) (?<size>[^ ]*) \\\"(?<referer>[^\\\"]*)\\\" \\\"(?<useragent>[^\\\"]*)\\\" \\\"(?<unk>[^\\\"]*)\\\"\"\"\".r",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "R: scala.util.matching.Regex = ^(?<ip>[0-9.]+) (?<identd>[^ ]) (?<user>[^ ]) \\[(?<datetime>[^\\]]+)\\] \\\"(?<request>[^\\\"]*)\\\" (?<status>[^ ]*) (?<size>[^ ]*) \\\"(?<referer>[^\\\"]*)\\\" \\\"(?<useragent>[^\\\"]*)\\\" \\\"(?<unk>[^\\\"]*)\\\"\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 45,
+      "time" : "Took: 0.555s, at 2019-03-17 14:05"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "B92A6ED53D494BC88A617048F6A42312"
+    },
+    "cell_type" : "code",
+    "source" : "val a = logs.map(_.getString(0)).take(2)\n",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "a: Array[String] = Array(\"\", 109.169.248.247 - - [12/Dec/2015:18:25:11 +0100] \"GET /administrator/ HTTP/1.1\" 200 4263 \"-\" \"Mozilla/5.0 (Windows NT 6.0; rv:34.0) Gecko/20100101 Firefox/34.0\" \"-\")\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 50,
+      "time" : "Took: 0.750s, at 2019-03-17 14:07"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "4DC69CBCDE7A45ABB9EB9E142361A03C"
+    },
+    "cell_type" : "code",
+    "source" : "R.unapplySeq(a(1))",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res82: Option[List[String]] = Some(List(109.169.248.247, -, -, 12/Dec/2015:18:25:11 +0100, GET /administrator/ HTTP/1.1, 200, 4263, -, Mozilla/5.0 (Windows NT 6.0; rv:34.0) Gecko/20100101 Firefox/34.0, -))\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "Some(List(109.169.248.247, -, -, 12/Dec/2015:18:25:11 +0100, GET /administrator/ HTTP/1.1, 200, 4263, -, Mozilla/5.0 (Windows NT 6.0; rv:34.0) Gecko/20100101 Firefox/34.0, -))"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 52,
+      "time" : "Took: 0.680s, at 2019-03-17 14:08"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "420A88E0403E4ABCA19BE872977CD795"
+    },
+    "cell_type" : "code",
+    "source" : "import java.time.LocalDateTime\nimport java.time.ZoneId\nimport java.time.format.DateTimeFormatter\n\nimport java.sql.Timestamp\n\ncase class AccessLog(ip: String, ident: String, user: String, timestamp: Timestamp, request: String, status: String, size: String, referer: String, userAgent: String, unk: String)\n\n// https://docs.oracle.com/javase/8/docs/api/index.html?java/time/format/package-summary.html\nval formatter = DateTimeFormatter.ofPattern(\"dd/MMM/yyyy:HH:mm:ss X\")\nval parisZone = ZoneId.of(\"Europe/Paris\")\n\nobject AccessLog {\n\n\tdef apply(s: String): Option[AccessLog]= R.unapplySeq(s) match {\n\t\tcase Some(List(ip, ident, user, datetime, request, status, size, referer, userAgent, unk)) => \n       Some(AccessLog(ip, ident, user, Timestamp.valueOf(LocalDateTime.from(formatter.parse(datetime))), request, status, size, referer, userAgent, unk))\n\t\tcase _ => None\n\t}\n}",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "import java.time.LocalDateTime\nimport java.time.ZoneId\nimport java.time.format.DateTimeFormatter\nimport java.sql.Timestamp\ndefined class AccessLog\nformatter: java.time.format.DateTimeFormatter = Value(DayOfMonth,2)'/'Text(MonthOfYear,SHORT)'/'Value(YearOfEra,4,19,EXCEEDS_PAD)':'Value(HourOfDay,2)':'Value(MinuteOfHour,2)':'Value(SecondOfMinute,2)' 'Offset(+HHmm,'Z')\nparisZone: java.time.ZoneId = Europe/Paris\ndefined object AccessLog\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 110,
+      "time" : "Took: 0.581s, at 2019-03-17 16:33"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "presentation" : {
+        "tabs_state" : "{\n  \"tab_id\": \"#tab579098500-0\"\n}",
+        "pivot_chart_state" : "{\n  \"hiddenAttributes\": [],\n  \"menuLimit\": 200,\n  \"cols\": [],\n  \"rows\": [],\n  \"vals\": [],\n  \"exclusions\": {},\n  \"inclusions\": {},\n  \"unusedAttrsVertical\": 85,\n  \"autoSortUnusedAttrs\": false,\n  \"inclusionsInfo\": {},\n  \"aggregatorName\": \"Count\",\n  \"rendererName\": \"Table\"\n}"
+      },
+      "id" : "61B39337688D4BA8BE814233D15E868B"
+    },
+    "cell_type" : "code",
+    "source" : "val alllogs = logs.map(_.getString(0)).flatMap(s => AccessLog.apply(s))",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "alllogs: org.apache.spark.sql.Dataset[AccessLog] = [ip: string, ident: string ... 8 more fields]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : ""
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 111,
+      "time" : "Took: 0.694s, at 2019-03-17 16:33"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "presentation" : {
+        "tabs_state" : "{\n  \"tab_id\": \"#tab56674696-0\"\n}",
+        "pivot_chart_state" : "{\n  \"hiddenAttributes\": [],\n  \"menuLimit\": 200,\n  \"cols\": [],\n  \"rows\": [],\n  \"vals\": [],\n  \"exclusions\": {},\n  \"inclusions\": {},\n  \"unusedAttrsVertical\": 85,\n  \"autoSortUnusedAttrs\": false,\n  \"inclusionsInfo\": {},\n  \"aggregatorName\": \"Count\",\n  \"rendererName\": \"Table\"\n}"
+      },
+      "id" : "BA987B6AAA8D4ECB8A4B0D347337D18B"
+    },
+    "cell_type" : "code",
+    "source" : "alllogs.createOrReplaceTempView(\"AccessLog\")\nspark.sql(\"select cast(timestamp as date) as date, count(*) as count from AccessLog group by date having count > 1000 order by count desc limit 10\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res183: org.apache.spark.sql.DataFrame = [date: date, count: bigint]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div class=\"df-canvas\">\n      <script data-this=\"{&quot;dataId&quot;:&quot;anonc95218e85a97b5a00a1f8945749343e4&quot;,&quot;partitionIndexId&quot;:&quot;anon74a9f92d0b8868815c34ccbda2ce8439&quot;,&quot;numPartitions&quot;:1,&quot;dfSchema&quot;:{&quot;type&quot;:&quot;struct&quot;,&quot;fields&quot;:[{&quot;name&quot;:&quot;date&quot;,&quot;type&quot;:&quot;date&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;count&quot;,&quot;type&quot;:&quot;long&quot;,&quot;nullable&quot;:false,&quot;metadata&quot;:{}}]}}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/dataframe','../javascripts/notebook/consoleDir'], \n      function(dataframe, extension) {\n        dataframe.call(data, this, extension);\n      }\n    );/*]]>*/</script>\n      <link rel=\"stylesheet\" href=\"/assets/stylesheets/ipython/css/dataframe.css\" type=\"text/css\"/>\n    </div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 118,
+      "time" : "Took: 16.304s, at 2019-03-17 16:37"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "52F127FA82E54C51B32FD2708613254A"
+    },
+    "cell_type" : "code",
+    "source" : "alllogs.count",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res117: Long = 2655452\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "2655452"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 76,
+      "time" : "Took: 1.475s, at 2019-03-17 14:19"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "E73F487D40884645AF0F47E018513C49"
+    },
+    "cell_type" : "code",
+    "source" : "spark.sql(\"select * from AccessLog where cast(timestamp as date) = '2018-05-28'\")",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res187: org.apache.spark.sql.DataFrame = [ip: string, ident: string ... 8 more fields]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div class=\"df-canvas\">\n      <script data-this=\"{&quot;dataId&quot;:&quot;anona35ed9a5e6bb64365a45b973da3fc8df&quot;,&quot;partitionIndexId&quot;:&quot;anon89032b78b81c571a38479fcad371bb67&quot;,&quot;numPartitions&quot;:8522,&quot;dfSchema&quot;:{&quot;type&quot;:&quot;struct&quot;,&quot;fields&quot;:[{&quot;name&quot;:&quot;ip&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;ident&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;user&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;timestamp&quot;,&quot;type&quot;:&quot;timestamp&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;request&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;status&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;size&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;referer&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;userAgent&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}},{&quot;name&quot;:&quot;unk&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}}]}}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/dataframe','../javascripts/notebook/consoleDir'], \n      function(dataframe, extension) {\n        dataframe.call(data, this, extension);\n      }\n    );/*]]>*/</script>\n      <link rel=\"stylesheet\" href=\"/assets/stylesheets/ipython/css/dataframe.css\" type=\"text/css\"/>\n    </div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 120,
+      "time" : "Took: 19.144s, at 2019-03-17 16:44"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "id" : "18018B9765ED45D6923BAF55F11BC380"
+    },
+    "cell_type" : "code",
+    "source" : "logs.map(_.getString(0)).filter(x => AccessLog.apply(x).isEmpty)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res119: org.apache.spark.sql.Dataset[String] = [value: string]\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div class=\"df-canvas\">\n      <script data-this=\"{&quot;dataId&quot;:&quot;anon7605c1d5ddfae25b40ecb9389b5b04b6&quot;,&quot;partitionIndexId&quot;:&quot;anonef63324d62c5925bf3bc99c9040dc347&quot;,&quot;numPartitions&quot;:184,&quot;dfSchema&quot;:{&quot;type&quot;:&quot;struct&quot;,&quot;fields&quot;:[{&quot;name&quot;:&quot;value&quot;,&quot;type&quot;:&quot;string&quot;,&quot;nullable&quot;:true,&quot;metadata&quot;:{}}]}}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/dataframe','../javascripts/notebook/consoleDir'], \n      function(dataframe, extension) {\n        dataframe.call(data, this, extension);\n      }\n    );/*]]>*/</script>\n      <link rel=\"stylesheet\" href=\"/assets/stylesheets/ipython/css/dataframe.css\" type=\"text/css\"/>\n    </div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 77,
+      "time" : "Took: 11.797s, at 2019-03-17 14:21"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "presentation" : {
+        "tabs_state" : "{\n  \"tab_id\": \"#tab70942641-0\"\n}",
+        "pivot_chart_state" : "{\n  \"hiddenAttributes\": [],\n  \"menuLimit\": 200,\n  \"cols\": [],\n  \"rows\": [],\n  \"vals\": [],\n  \"exclusions\": {},\n  \"inclusions\": {},\n  \"unusedAttrsVertical\": 85,\n  \"autoSortUnusedAttrs\": false,\n  \"inclusionsInfo\": {},\n  \"aggregatorName\": \"Count\",\n  \"rendererName\": \"Table\"\n}"
+      },
+      "id" : "69F4A350C5CB47B6877F3976B3CF2E43"
+    },
+    "cell_type" : "code",
+    "source" : "res119.count\n",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res124: Long = 4598\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "4598"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 80,
+      "time" : "Took: 11.397s, at 2019-03-17 15:37"
+    } ]
+  }, {
+    "metadata" : {
+      "id" : "A1540964E4264C0685BB441397FC1D6E"
+    },
+    "cell_type" : "markdown",
+    "source" : "Check vulnerability https://blog.cloudflare.com/the-joomla-unserialize-vulnerability/"
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : false,
+      "presentation" : {
+        "tabs_state" : "{\n  \"tab_id\": \"#tab112809619-0\"\n}",
+        "pivot_chart_state" : "{\n  \"hiddenAttributes\": [],\n  \"menuLimit\": 200,\n  \"cols\": [],\n  \"rows\": [],\n  \"vals\": [],\n  \"exclusions\": {},\n  \"inclusions\": {},\n  \"unusedAttrsVertical\": 85,\n  \"autoSortUnusedAttrs\": false,\n  \"inclusionsInfo\": {},\n  \"aggregatorName\": \"Count\",\n  \"rendererName\": \"Table\"\n}"
+      },
+      "id" : "1E8B90B1A21542EB9527585283DA0845"
+    },
+    "cell_type" : "code",
+    "source" : "alllogs.map(_.datetime).take(1)",
+    "outputs" : [ {
+      "name" : "stdout",
+      "output_type" : "stream",
+      "text" : "res128: Array[String] = Array(12/Dec/2015:18:25:11 +0100)\n"
+    }, {
+      "metadata" : { },
+      "data" : {
+        "text/html" : "<div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anon90d2c55b4bb54d735c526c167c0a95d1&quot;,&quot;dataInit&quot;:[],&quot;genId&quot;:&quot;112809619&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tabs'], \n      function(playground, _magictabs) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictabs,\n    \"o\": {}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <div>\n        <ul class=\"nav nav-tabs\" id=\"ul112809619\"><li>\n              <a href=\"#tab112809619-0\"><i class=\"fa fa-table\"/></a>\n            </li><li>\n              <a href=\"#tab112809619-1\"><i class=\"fa fa-cubes\"/></a>\n            </li></ul>\n\n        <div class=\"tab-content\" id=\"tab112809619\"><div class=\"tab-pane\" id=\"tab112809619-0\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anonec915f72e3c52c594375830dd46f9e51&quot;,&quot;dataInit&quot;:[{&quot;string value&quot;:&quot;12/Dec/2015:18:25:11 +0100&quot;}],&quot;genId&quot;:&quot;891591045&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/tableChart'], \n      function(playground, _magictableChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magictableChart,\n    \"o\": {\"headers\":[\"string value\"],\"width\":600,\"height\":400}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon0c857bfbe0453b98ecd5f97927051415&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon1ff928c4e53b475604153f4fe35f10b1&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div><div class=\"tab-pane\" id=\"tab112809619-1\">\n            <div>\n      <script data-this=\"{&quot;dataId&quot;:&quot;anonbfeeae85ae7681147db496bcce144e76&quot;,&quot;dataInit&quot;:[{&quot;string value&quot;:&quot;12/Dec/2015:18:25:11 +0100&quot;}],&quot;genId&quot;:&quot;935097061&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/req(['../javascripts/notebook/playground','../javascripts/notebook/magic/pivotChart'], \n      function(playground, _magicpivotChart) {\n        // data ==> data-this (in observable.js's scopedEval) ==> this in JS => { dataId, dataInit, ... }\n        // this ==> scope (in observable.js's scopedEval) ==> this.parentElement ==> div.container below (toHtml)\n\n        playground.call(data,\n                        this\n                        ,\n                        {\n    \"f\": _magicpivotChart,\n    \"o\": {\"width\":600,\"height\":400,\"derivedAttributes\":{},\"extraOptions\":{}}\n  }\n  \n                        \n                        \n                      );\n      }\n    );/*]]>*/</script>\n    <div>\n      <span class=\"chart-total-item-count\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anon9d21bec3c304bc4a5ae9beda14c7f6c8&quot;,&quot;initialValue&quot;:&quot;1&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p> entries total</span>\n      <span class=\"chart-sampling-warning\"><p data-bind=\"text: value\"><script data-this=\"{&quot;valueId&quot;:&quot;anonf7eb8ad775a870a770ab3f0a698ac99f&quot;,&quot;initialValue&quot;:&quot;&quot;}\" type=\"text/x-scoped-javascript\">/*<![CDATA[*/\nreq(\n['observable', 'knockout'],\nfunction (O, ko) {\n  ko.applyBindings({\n      value: O.makeObservable(valueId, initialValue)\n    },\n    this\n  );\n});\n        /*]]>*/</script></p></span>\n      <div>\n      </div>\n    </div></div>\n            </div></div>\n      </div>\n    </div></div>"
+      },
+      "output_type" : "execute_result",
+      "execution_count" : 82,
+      "time" : "Took: 0.882s, at 2019-03-17 15:55"
+    } ]
+  }, {
+    "metadata" : {
+      "trusted" : true,
+      "input_collapsed" : false,
+      "collapsed" : true,
+      "id" : "2F0A1F7F268242BE8B27EF01997A7783"
+    },
+    "cell_type" : "code",
+    "source" : "",
+    "outputs" : [ ]
+  } ],
+  "nbformat" : 4
+}
